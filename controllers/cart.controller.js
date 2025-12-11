@@ -8,25 +8,24 @@ class CartController {
         try {
             const authHeader = req.headers.authorization;
 
-            // no token send = guest user
             if (!authHeader) return next();
 
             const token = authHeader.split(" ")[1];
             if (!token) return next();
 
-
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
             if (decoded?.id) {
-                req.customer = await Customer.findById(decoded.id);
+                req.customer = await Customer.findById(decoded.id).select("-password");
             }
+
+            next(); // ✔ only once
 
         } catch (err) {
             console.log("error:=>", err);
-            res.status(401).json({ message: "Token invalid or expired" });
+            return res.status(401).json({ message: "Token invalid or expired" });
         }
-        next();
-    }
+    };
 
     addItem = async (req, res) => {
         try {
@@ -71,16 +70,24 @@ class CartController {
 
             await cart.save();
 
-            const total = cart.items.reduce((acc, val) => {
-                return acc + (val.productId?.price || 0) * val.quantity;
-            }, 0);
+            const populatedCart = await Cart.findById(cart._id).populate(
+                "items.productId",
+                "name price image"
+            );
+
+            const prices = populatedCart.items.map(item =>
+                (item.productId?.price || 0) * item.quantity
+            );
+
+            // FIX: numeric reducer
+            const getCartTotal = prices.reduce((acc, val) => acc + Number(val), 0);
 
             res.json({
                 isSuccess: true,
                 message: "Item added to cart",
-                subtotal: total,
-                itemCount: cart.items.length,
-                data: cart
+                subtotal: getCartTotal,
+                itemCount: populatedCart.items.length,
+                data: populatedCart
             });
 
         } catch (err) {
@@ -93,23 +100,31 @@ class CartController {
             let cart;
 
             if (req.customer && req.customer._id) {
-                cart = await Cart.findOne({ userId: req.customer._id });
+                cart = await Cart.findOne({ userId: req.customer._id }).populate(
+                    "items.productId",
+                    "name price image"
+                );
             } else if (req.headers["guest-cart-id"]) {
-                cart = await Cart.findOne({ guestCartId: req.headers["guest-cart-id"] });
+                cart = await Cart.findOne({ guestCartId: req.headers["guest-cart-id"] }).populate(
+                    "items.productId",
+                    "name price image"
+                );
             }
 
             if (!cart) {
                 return res.json({ items: [], total: 0 });
             }
 
-            // calculate total
-            const total = cart.items.reduce((acc, val) => {
-                return acc + (val.productId?.price || 0) * val.quantity;
-            }, 0);
+            const prices = cart.items.map(item =>
+                (item.productId?.price || 0) * item.quantity
+            );
+
+            // FIX: numeric reducer
+            const getCartTotal = prices.reduce((acc, val) => acc + Number(val), 0);
 
             res.json({
                 isSuccess: true,
-                subtotal: total,
+                subtotal: getCartTotal,
                 itemCount: cart.items.length,
                 data: cart
             });
@@ -146,16 +161,24 @@ class CartController {
 
             await cart.save();
 
-            const total = cart.items.reduce((acc, val) => {
-                return acc + (val.productId?.price || 0) * val.quantity;
-            }, 0);
+            const populatedCart = await Cart.findById(cart._id).populate(
+                "items.productId",
+                "name price image"
+            );
+
+            const prices = populatedCart.items.map(item =>
+                (item.productId?.price || 0) * item.quantity
+            );
+
+            // FIX: numeric reducer
+            const getCartTotal = prices.reduce((acc, val) => acc + Number(val), 0);
 
             res.json({
                 isSuccess: true,
                 message: "Cart updated",
-                subtotal: total,
-                itemCount: cart.items.length,
-                data: cart
+                subtotal: getCartTotal,
+                itemCount: populatedCart.items.length,
+                data: populatedCart
             });
 
         } catch (err) {
@@ -180,16 +203,24 @@ class CartController {
 
             await cart.save();
 
-            const total = cart.items.reduce((acc, val) => {
-                return acc + (val.productId?.price || 0) * val.quantity;
-            }, 0);
+             const populatedCart = await Cart.findById(cart._id).populate(
+                "items.productId",
+                "name price image"
+            );
+
+            const prices = populatedCart.items.map(item =>
+                (item.productId?.price || 0) * item.quantity
+            );
+
+            // FIX: numeric reducer
+            const getCartTotal = prices.reduce((acc, val) => acc + Number(val), 0);
 
             res.json({
                 isSuccess: true,
                 message: "Item removed",
-                subtotal: total,
-                itemCount: cart.items.length,
-                data: cart
+                subtotal: getCartTotal,
+                itemCount: populatedCart.items.length,
+                data: populatedCart
             });
 
         } catch (err) {
@@ -198,4 +229,4 @@ class CartController {
     }
 
 }
-export default new CartController;
+export default new CartController();

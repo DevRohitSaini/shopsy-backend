@@ -30,8 +30,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Initialize Redis client
-redisClient.connect();
-console.log("Connected to Redis!")
+// redisClient.connect();
+// console.log("Connected to Redis!")
 
 // Routes
 app.use("/api", routes);
