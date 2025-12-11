@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db.js";
 import routes from "./routes.js";
+import passport from "./config/passport.js";
+import session from "express-session";
 
 import redisClient from "./redis-server.js";
 
@@ -11,8 +13,21 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true
+}));
+
 app.use(express.json());
+
+app.use(session({
+  secret: process.env.SESSION_SECRET || "SECRET",
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Initialize Redis client
 redisClient.connect();

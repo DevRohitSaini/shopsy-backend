@@ -1,7 +1,7 @@
 import Custumer from '../models/Customer.js';
 
 class CustumerController {
-	
+
 
 	_populate = async (req, res, next) => {
 		if (req.params.id && req.params.id != 'newuser') {
@@ -34,15 +34,15 @@ class CustumerController {
 		let filter = {};
 		let sort = {};
 
-    filter.status = 'active';
+		filter.status = 'active';
 		if (req.query.status) {
 			filter.status = req.query.status;
 		}
-    // Pagination mode
-    const { page, limit } = req.query;
-    const pageNum = parseInt(page) || 1;
-    const limitNum = parseInt(limit) || 10;
-    const skip = (pageNum - 1) * limitNum;
+		// Pagination mode
+		const { page, limit } = req.query;
+		const pageNum = parseInt(page) || 1;
+		const limitNum = parseInt(limit) || 10;
+		const skip = (pageNum - 1) * limitNum;
 
 		try {
 
@@ -52,11 +52,11 @@ class CustumerController {
 			]);
 
 			res.json({
-        isSuccess: true,
+				isSuccess: true,
 				object: 'list',
 				page: {
 					...req.query,
-					totalPages:  Math.ceil(total / limitNum),
+					totalPages: Math.ceil(itemCount / limitNum),
 					totalItems: itemCount,
 				},
 				data: results,
@@ -95,7 +95,7 @@ class CustumerController {
 
 		} else {
 
-      let newCustumer = new User(filter);
+			let newCustumer = new Custumer(filter);
 			try {
 				const custumer = await newCustumer.save();
 				res.status(201).json({
@@ -130,18 +130,17 @@ class CustumerController {
 	}
 
 	delete = async (req, res, next) => {
-		if (!req.custumer) {
-			return res.sendStatus(403);
-		}
-
+		console.log('Deleting customer with id:', req.params.id);
 		try {
-			await req.custumer.findByIdAndDelete(req.params.id)
-			res.status(200).json({
-				isSuccess: true
-			});
+			const deleted = await Custumer.findByIdAndDelete(req.params.id);
+
+			if (!deleted)
+				return res.status(404).json({ message: "Customer not found" });
+
+			res.json({ message: "Customer deleted successfully" });
+
 		} catch (err) {
-			console.log('err=>', err);
-			next(err);
+			res.status(500).json({ message: err.message });
 		}
 	}
 

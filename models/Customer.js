@@ -4,9 +4,11 @@ import jwt from "jsonwebtoken";
 
 const customerSchema = new mongoose.Schema(
   {
+    displayName:{
+      type: String,
+    },
     firstName: {
       type: String,
-      required: [true, "First name is required"]
     },
     lastName: {
       type: String,
@@ -24,7 +26,6 @@ const customerSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      required: false
     },
     address: {
       type: String,
