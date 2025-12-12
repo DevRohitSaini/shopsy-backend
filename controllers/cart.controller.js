@@ -7,7 +7,6 @@ class CartController {
     _populate = async (req, res, next) => {
         try {
             const authHeader = req.headers.authorization;
-
             if (!authHeader) return next();
 
             const token = authHeader.split(" ")[1];
@@ -15,8 +14,8 @@ class CartController {
 
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-            if (decoded?.id) {
-                req.customer = await Customer.findById(decoded.id).select("-password");
+            if (decoded?._id) {
+                req.customer = await Customer.findById(decoded._id);
             }
 
             next(); // ✔ only once
@@ -48,7 +47,7 @@ class CartController {
             // If cart not exists create new one
             if (!cart) {
                 cart = await Cart.create({
-                    userId: req.user?._id || null,
+                    userId: req.customer?._id || null,
                     guestCartId: req.headers["guest-cart-id"] || null,
                     items: []
                 });

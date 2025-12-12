@@ -6,7 +6,7 @@ import routes from "./routes.js";
 import passport from "./config/passport.js";
 import session from "express-session";
 
-import redisClient from "./redis-server.js";
+// import redisClient from "./redis-server.js";
 
 dotenv.config();
 connectDB();
