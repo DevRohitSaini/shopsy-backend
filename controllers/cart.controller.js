@@ -227,5 +227,42 @@ class CartController {
         }
     }
 
+    cartCounter = async (req, res) => {
+        try{
+            let cart;
+
+            if (req.customer && req.customer._id) {
+                cart = await Cart.findOne({ userId: req.customer._id }).populate(
+                    "items.productId",
+                    "name price image"
+                );
+            } else if (req.headers["guest-cart-id"]) {
+                cart = await Cart.findOne({ guestCartId: req.headers["guest-cart-id"] }).populate(
+                    "items.productId",
+                    "name price image"
+                );
+            }
+
+            if (!cart) {
+                return res.json({ items: [], total: 0 });
+            }
+
+            const prices = cart.items.map(item =>
+                (item.productId?.price || 0) * item.quantity
+            );
+
+            // FIX: numeric reducer
+            const getCartTotal = prices.reduce((acc, val) => acc + Number(val), 0);
+
+            res.json({
+                isSuccess: true,
+                subtotal: getCartTotal,
+                itemCount: cart.items.length,
+            });
+        } catch (err) {
+            res.status(500).json({ message: err.message });
+        }
+    }
+
 }
 export default new CartController();

@@ -15,4 +15,7 @@ router.put("/update", CartController._populate, CartController.updateCart);
 // // Remove item from cart 
 router.delete("/remove", CartController._populate, CartController.removeItem);
 
+// // Get Cart itmem count
+router.get("/cart-counter", CartController._populate, CartController.cartCounter);
+
 export default router;
