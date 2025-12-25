@@ -27,9 +27,25 @@ const customerSchema = new mongoose.Schema(
     phone: {
       type: String,
     },
-    address: {
+    street: {
       type: String,
       default: ""
+    },
+    city: {
+      type: String,
+      default: ""
+    },    
+    postcode: {
+      type: String,
+      default: ""
+    },
+    state: {
+      type: String,
+      default: ""
+    },
+    county: {
+      type: String,
+      default: "India"
     },
     status: {
       type: String,
