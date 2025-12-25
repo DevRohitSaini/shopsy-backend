@@ -4,6 +4,7 @@ class CustumerController {
 
 
 	_populate = async (req, res, next) => {
+		// This is middleware to populate customer from ID parameter
 		if (req.params.id && req.params.id != 'newuser') {
 			const {
 				id,
@@ -138,6 +139,26 @@ class CustumerController {
 				return res.status(404).json({ message: "Customer not found" });
 
 			res.json({ message: "Customer deleted successfully" });
+
+		} catch (err) {
+			res.status(500).json({ message: err.message });
+		}
+	}
+
+
+	passwordReset = async (req, res, next) => {
+		try {
+			const custumer = req.custumer;
+			if (!custumer) return res.status(401).json({ isSuccess: false, message: "Customer not found" });
+
+			const { oldPassword, newPassword } = req.body;
+
+			const isMatch = await custumer.matchPassword(oldPassword);
+			if (!isMatch) return res.status(401).json({ isSuccess: false, message: "Old password does not match" });
+			
+			custumer.password = newPassword;
+			await custumer.save();
+			res.json({ isSuccess: true, message: "Password reset successfully" });
 
 		} catch (err) {
 			res.status(500).json({ message: err.message });

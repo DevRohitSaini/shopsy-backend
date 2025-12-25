@@ -13,4 +13,7 @@ routes.route('/:id')
     .put(authenticate, CustumerController._populate, CustumerController.update)
     .delete(authenticate, CustumerController.delete);
 
+routes.route('/:id/password-reset')
+    .post(authenticate, CustumerController._populate, CustumerController.passwordReset);
+
 export default routes;
