@@ -27,7 +27,7 @@ class CustumerController {
 				next(err);
 			}
 		} else {
-			next();
+			res.status(500).json({ isSuccess: false, message: 'ID not found' });
 		}
 	}
 
@@ -108,7 +108,7 @@ class CustumerController {
 					res.status(err.status).json({ isSuccess: false, message: err.message });
 				} else {
 					console.error('Error:', err);
-					res.status(500).json({ isSuccess: false, message: 'Internal server error' });
+					res.status(500).json({ isSuccess: false, message: err.message });
 				}
 			}
 		}
@@ -125,8 +125,12 @@ class CustumerController {
 				data: savedCustumer
 			});
 		} catch (err) {
-			console.log('err=>', err);
-			next(err);
+			if (err.status) {
+				res.status(err.status).json({ isSuccess: false, message: err.message });
+			} else {
+				console.error('Error:', err);
+				res.status(500).json({ isSuccess: false, message: err.message });
+			}
 		}
 	}
 
@@ -155,7 +159,7 @@ class CustumerController {
 
 			const isMatch = await custumer.matchPassword(oldPassword);
 			if (!isMatch) return res.status(401).json({ isSuccess: false, message: "Old password does not match" });
-			
+
 			custumer.password = newPassword;
 			await custumer.save();
 			res.json({ isSuccess: true, message: "Password reset successfully" });

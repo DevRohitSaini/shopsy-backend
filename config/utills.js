@@ -22,5 +22,15 @@ const authMiddleware = (req, res, next) => {
   next();
 };
 
+function slugify(text) {
+  return text
+    .normalize("NFD")                  // Split accented characters
+    .replace(/[\u0300-\u036f]/g, '')   // Remove accents
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')       // Replace non-alphanumeric with -
+    .replace(/^-+|-+$/g, '');          // Remove leading/trailing -
+}
 
-export { generateCacheKey, authMiddleware };
+
+export { generateCacheKey, authMiddleware, slugify };
