@@ -23,8 +23,12 @@ class CustumerController {
 				req.custumer = custumer;
 				next();
 			} catch (err) {
-				console.log(err);
-				next(err);
+				if (err.status) {
+					res.status(err.status).json({ isSuccess: false, message: err.message });
+				} else {
+					console.error('Error:', err);
+					res.status(500).json({ isSuccess: false, message: 'Internal server error' });
+				}
 			}
 		} else {
 			res.status(500).json({ isSuccess: false, message: 'ID not found' });
@@ -63,22 +67,35 @@ class CustumerController {
 				data: results,
 			});
 		} catch (err) {
-			console.log('err=>', err);
-			next(err);
+			if (err.status) {
+				res.status(err.status).json({ isSuccess: false, message: err.message });
+			} else {
+				console.error('Error:', err);
+				res.status(500).json({ isSuccess: false, message: 'Internal server error' });
+			}
 		}
 	}
 
 	fetch = async (req, res) => {
-		const custumer = req.custumer;
+		try {
+			const custumer = req.custumer;
 
-		if (!custumer) {
-			return res.sendStatus(404);
+			if (!custumer) {
+				return res.sendStatus(404);
+			}
+
+			res.status(200).json({
+				isSuccess: true,
+				data: custumer
+			});
+		} catch (err) {
+			if (err.status) {
+				res.status(err.status).json({ isSuccess: false, message: err.message });
+			} else {
+				console.error('Error:', err);
+				res.status(500).json({ isSuccess: false, message: 'Internal server error' });
+			}
 		}
-
-		res.status(200).json({
-			isSuccess: true,
-			data: custumer
-		});
 	}
 
 	create = async (req, res, next) => {
@@ -145,8 +162,13 @@ class CustumerController {
 			res.json({ message: "Customer deleted successfully" });
 
 		} catch (err) {
-			res.status(500).json({ message: err.message });
-		}
+            if (err.status) {
+                res.status(err.status).json({ isSuccess: false, message: err.message });
+            } else {
+                console.error('Error:', err);
+                res.status(500).json({ isSuccess: false, message: 'Internal server error' });
+            }
+        }
 	}
 
 
@@ -165,8 +187,13 @@ class CustumerController {
 			res.json({ isSuccess: true, message: "Password reset successfully" });
 
 		} catch (err) {
-			res.status(500).json({ message: err.message });
-		}
+            if (err.status) {
+                res.status(err.status).json({ isSuccess: false, message: err.message });
+            } else {
+                console.error('Error:', err);
+                res.status(500).json({ isSuccess: false, message: 'Internal server error' });
+            }
+        }
 	}
 
 }

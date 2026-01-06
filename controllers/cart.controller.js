@@ -21,8 +21,12 @@ class CartController {
             next(); // ✔ only once
 
         } catch (err) {
-            console.log("error:=>", err);
-            return res.status(401).json({ message: "Token invalid or expired" });
+            if (err.status) {
+                res.status(err.status).json({ isSuccess: false, message: err.message });
+            } else {
+                console.error('Error:', err);
+                res.status(500).json({ isSuccess: false, message: 'Internal server error' });
+            }
         }
     };
 
@@ -90,7 +94,12 @@ class CartController {
             });
 
         } catch (err) {
-            res.status(500).json({ message: err.message });
+            if (err.status) {
+                res.status(err.status).json({ isSuccess: false, message: err.message });
+            } else {
+                console.error('Error:', err);
+                res.status(500).json({ isSuccess: false, message: 'Internal server error' });
+            }
         }
     }
 
@@ -130,7 +139,12 @@ class CartController {
 
 
         } catch (err) {
-            res.status(500).json({ message: err.message });
+            if (err.status) {
+                res.status(err.status).json({ isSuccess: false, message: err.message });
+            } else {
+                console.error('Error:', err);
+                res.status(500).json({ isSuccess: false, message: 'Internal server error' });
+            }
         }
     };
 
@@ -181,7 +195,12 @@ class CartController {
             });
 
         } catch (err) {
-            res.status(500).json({ message: err.message });
+            if (err.status) {
+                res.status(err.status).json({ isSuccess: false, message: err.message });
+            } else {
+                console.error('Error:', err);
+                res.status(500).json({ isSuccess: false, message: 'Internal server error' });
+            }
         }
     }
 
@@ -223,7 +242,12 @@ class CartController {
             });
 
         } catch (err) {
-            res.status(500).json({ message: err.message });
+            if (err.status) {
+                res.status(err.status).json({ isSuccess: false, message: err.message });
+            } else {
+                console.error('Error:', err);
+                res.status(500).json({ isSuccess: false, message: 'Internal server error' });
+            }
         }
     }
 
@@ -260,7 +284,12 @@ class CartController {
                 itemCount: cart.items.length,
             });
         } catch (err) {
-            res.status(500).json({ message: err.message });
+            if (err.status) {
+                res.status(err.status).json({ isSuccess: false, message: err.message });
+            } else {
+                console.error('Error:', err);
+                res.status(500).json({ isSuccess: false, message: 'Internal server error' });
+            }
         }
     }
 
