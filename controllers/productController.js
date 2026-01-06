@@ -83,7 +83,7 @@ class productController {
                 const products = await Product.find().populate("category");
                 return res.json({
                     totalItems: products.length,
-                    data: products                    
+                    data: products
                 });
             }
 
@@ -101,7 +101,7 @@ class productController {
             ]);
 
             res.json({
-                isSuccess: true,                
+                isSuccess: true,
                 currentPage: pageNum,
                 totalPages: Math.ceil(total / limitNum),
                 totalItems: total,
@@ -116,7 +116,7 @@ class productController {
                 res.status(500).json({ isSuccess: false, message: 'Internal server error' });
             }
         }
-    }  
+    }
 
     create = async (req, res) => {
         let newProduct = new Product(req.body);
@@ -131,7 +131,7 @@ class productController {
                 res.status(err.status).json({ isSuccess: false, message: err.message });
             } else {
                 console.error('Error:', err);
-                res.status(500).json({ isSuccess: false, message: err.message  });
+                res.status(500).json({ isSuccess: false, message: err.message });
             }
         }
     }
@@ -198,7 +198,7 @@ class productController {
                 res.status(err.status).json({ isSuccess: false, message: err.message });
             } else {
                 console.error('Error:', err);
-                res.status(500).json({ isSuccess: false, message: err.message  });
+                res.status(500).json({ isSuccess: false, message: err.message });
             }
         }
     }
@@ -224,15 +224,26 @@ class productController {
 
     fatchByCatSlug = async (req, res) => {
         try {
-            const { slug } = req.params;            
+
+            // await Product.updateMany(
+            //     { category: { $type: "string" } },
+            //     [{ $set: { category: [{ $toObjectId: "$category" }] } }],
+            //     { updatePipeline: true }
+            // );
+
+
+            const { slug } = req.params;
             const category = await Category.findOne({ slug: slug });
 
             if (!category) {
                 return res.status(404).json({ isSuccess: false, message: "Category not found" });
             }
-            
-            const products = await Product.find({category: category._id}).populate("category");
-            
+
+            // const products = await Product.find({category: category._id}).populate("category");
+            const products = await Product.find({
+                category: { $in: [category._id] }
+            }).populate("category");
+
             res.json({
                 isSuccess: true,
                 count: products.length,

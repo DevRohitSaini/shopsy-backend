@@ -1,6 +1,6 @@
 // models/Product.js
 import mongoose from "mongoose";
-import {slugify} from "../config/utills.js";
+import { slugify } from "../config/utills.js";
 
 const productsSchema = new mongoose.Schema(
   {
@@ -20,9 +20,9 @@ const productsSchema = new mongoose.Schema(
       required: true,
     },
     category: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: [mongoose.Schema.Types.ObjectId],
       ref: "Category",
-      required: true,
+      required: true
     },
     image: {
       type: String,
