@@ -27,7 +27,15 @@ const customerSchema = new mongoose.Schema(
     phone: {
       type: String,
     },
+    house_number: {
+      type: String,
+      default: ""
+    },
     street: {
+      type: String,
+      default: ""
+    },
+    landmark: {
       type: String,
       default: ""
     },
