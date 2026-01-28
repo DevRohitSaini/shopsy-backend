@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 function generateCacheKey(req) {
     const baseUrl = req.path.replace(/^\/+|\/+$/g, '').replace(/\//g, ':');
     const params = req.query;
@@ -32,5 +34,43 @@ function slugify(text) {
     .replace(/^-+|-+$/g, '');          // Remove leading/trailing -
 }
 
+function generateOrderID() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const random = Math.floor(100000 + Math.random() * 900000);
+  return `ORD${year}${random}`;
+};
 
-export { generateCacheKey, authMiddleware, slugify };
+/**
+ * Check if MongoDB supports transactions
+ */
+function isTransactionSupported (){
+  const topology = mongoose.connection?.client?.topology?.description;
+  return topology && topology.type !== "Single";
+};
+
+/**
+ * Run function with or without transaction
+ */
+async function runWithTransaction(callback){
+  if (!isTransactionSupported()) {
+    // ❌ No transactions supported
+    return await callback(null);
+  }
+
+  // ✅ Transactions supported
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const result = await callback(session);
+    await session.commitTransaction();
+    return result;
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
+};
+export { generateCacheKey, authMiddleware, slugify, generateOrderID, runWithTransaction };

@@ -2,8 +2,7 @@
 import mongoose from "mongoose";
 import { slugify } from "../config/utills.js";
 
-const productsSchema = new mongoose.Schema(
-  {
+const productsSchema = new mongoose.Schema({
     name: {
       type: String,
       required: true,
@@ -39,7 +38,11 @@ const productsSchema = new mongoose.Schema(
     stock: {
       type: Number,
       default: 0,
-    }
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true }
 );

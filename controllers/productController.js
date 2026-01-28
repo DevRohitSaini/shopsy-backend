@@ -142,7 +142,6 @@ class productController {
      */
 
     _populate = async (req, res, next) => {
-        // This is middleware to populate customer from ID parameter
         if (req.params.id && req.params.id != 'newproduct') {
             const {
                 id,

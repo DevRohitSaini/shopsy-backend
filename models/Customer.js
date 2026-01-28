@@ -27,33 +27,37 @@ const customerSchema = new mongoose.Schema(
     phone: {
       type: String,
     },
-    house_number: {
+    houseNumber: {
       type: String,
       default: ""
     },
-    street: {
+    addressLine1: {
       type: String,
       default: ""
     },
-    landmark: {
+    addressLine2: {
       type: String,
       default: ""
     },
     city: {
       type: String,
       default: ""
-    },    
-    postcode: {
-      type: String,
-      default: ""
-    },
+    },   
     state: {
       type: String,
       default: ""
-    },
-    county: {
+    }, 
+    postcode: {
+      type: String,
+      default: ""
+    },    
+    country: {
       type: String,
       default: "India"
+    },
+    isAutoCreated: {
+      type: Boolean,
+      default: false
     },
     status: {
       type: String,

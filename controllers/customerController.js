@@ -103,6 +103,7 @@ class CustumerController {
 		if (!filter.password) {
 			filter.password = "123456"
 		}
+		//filter.isVerified = true;
 
 		const existingCustumer = await Custumer.findOne({ 'email': req.body.email });
 		if (existingCustumer) {
