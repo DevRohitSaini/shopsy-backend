@@ -99,6 +99,7 @@ class OrderController {
                     items: orderItems,
                     pricing: { subtotal, shippingFee, tax, discount, total },
                     shippingAddress,
+                    additionalInformation: req.body.additionalInformation || "",
                     shippingMethod,
                     payment: {
                         method: payment?.method || "COD",

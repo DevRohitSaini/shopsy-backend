@@ -51,6 +51,9 @@ const orderSchema = new mongoose.Schema({
                 default: "India"
             }
         },
+        additionalInformation: {
+            type: String
+        },
         shippingMethod: {
             code: {
                 type: String,
