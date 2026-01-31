@@ -291,16 +291,16 @@ class OrderController {
                 });
             }
 
-            const order = await Order.findOne({ user })
+            const orders = await Order.find({ user })
             .select("orderID pricing.total createdAt status");
 
-            if (!order) {
+            if (!orders || orders.length === 0) {
                 return res.status(404).json({
                     isSuccess: false,
                     message: "Order not found"
                 });
             }
-            res.json({ isSuccess: true, order });
+            res.json({ isSuccess: true, data: orders });
         } catch (err) {
             if (err.status) {
                 res.status(err.status).json({ isSuccess: false, message: err.message });
