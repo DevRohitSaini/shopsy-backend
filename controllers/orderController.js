@@ -300,7 +300,7 @@ class OrderController {
                     message: "Order not found"
                 });
             }
-            res.json({ isSuccess: true, data: orders });
+            res.json({ isSuccess: true, totalOrders: orders.length, data: orders });
         } catch (err) {
             if (err.status) {
                 res.status(err.status).json({ isSuccess: false, message: err.message });
